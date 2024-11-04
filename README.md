@@ -75,6 +75,7 @@ Response
 
 <h3> To get all LLM available on platform </h3> 
 Request
+
 ```
 http://localhost:8080/llmAvailable
 ```
@@ -119,6 +120,7 @@ Response
 
 <h3> To get Carbon intensity in region if LLM model is available </h3> 
 Request
+
 ```
 http://localhost:8080/llmPerRegion/Cohere%20Embed%20English
 ```
