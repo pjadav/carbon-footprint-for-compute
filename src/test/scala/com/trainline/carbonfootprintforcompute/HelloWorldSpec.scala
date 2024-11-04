@@ -5,6 +5,6 @@ import munit.CatsEffectSuite
 class HelloWorldSpec extends CatsEffectSuite {
 
   test("HelloWorld returns status code 200") {
-   "hello"
+    "hello"
   }
 }

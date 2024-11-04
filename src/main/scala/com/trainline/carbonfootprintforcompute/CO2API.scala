@@ -16,25 +16,26 @@ import org.typelevel.ci.CIString
 
 import java.time.Instant
 
-trait CO2API [F[_]]{
-  def get(region:String): F[Emission]
+trait CO2API[F[_]] {
+  def get(region: String): F[Emission]
 }
 
-object CO2API{
+object CO2API {
   final case class Emission(
-                             zone: String,
-                             carbonIntensity:Int,
-                             datetime:Instant,
-                             updatedAt:Instant,
-                             createdAt:Instant,
-                             emissionFactorType:String,
-                             isEstimated: Boolean,
-                             estimationMethod:String)
+    zone: String,
+    carbonIntensity: Int,
+    datetime: Instant,
+    updatedAt: Instant,
+    createdAt: Instant,
+    emissionFactorType: String,
+    isEstimated: Boolean,
+    estimationMethod: String
+  )
 
   object Emission {
     implicit val emissionDecoder: Decoder[Emission] = deriveDecoder[Emission]
 
-    implicit def emissionEntityDecoder[F[_] : Concurrent]: EntityDecoder[F, Emission] =
+    implicit def emissionEntityDecoder[F[_]: Concurrent]: EntityDecoder[F, Emission] =
       jsonOf
 
     implicit val emissioncoder: Encoder[Emission] = deriveEncoder[Emission]
@@ -43,14 +44,21 @@ object CO2API{
       jsonEncoderOf
   }
 
-  def impl[F[_]: Concurrent](C: Client[F]): CO2API[F] = new CO2API[F]{
-    val dsl = new Http4sClientDsl[F]{}
+  def impl[F[_]: Concurrent](C: Client[F]): CO2API[F] = new CO2API[F] {
+    val dsl = new Http4sClientDsl[F] {}
     import dsl._
-    def get(region:String): F[Emission] = {
-      val request = GET(uri"https://api.electricitymap.org/v3/carbon-intensity/latest".withQueryParam("zone",awsRegionToEnergyRegion(region)),Headers(Header.Raw(CIString("auth-token"), sys.env.getOrElse("API_KEY", ""))))
-      C.expect[Emission](request)
-        .adaptError{ case t => emissionError(t)} // Prevent Client Json Decoding Failure Leaking
+    def get(region: String): F[Emission] = {
+      val request = GET(
+        uri"https://api.electricitymap.org/v3/carbon-intensity/latest"
+          .withQueryParam("zone", awsRegionToEnergyRegion(region)),
+        Headers(Header.Raw(CIString("auth-token"), "QeGjeYxqTVhXj"))
+      )
+      val o = C.expect[Emission](request).adaptError { case t =>
+        emissionError(t)
+      } // Prevent Client Json Decoding Failure Leaking
+      o
     }
   }
 
+  // sys.env.getOrElse("API_KEY", "")
 }

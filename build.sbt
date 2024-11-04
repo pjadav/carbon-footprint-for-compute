@@ -11,6 +11,9 @@ lazy val root = (project in file("."))
     version := "0.0.1-SNAPSHOT",
     scalaVersion := "2.13.10",
     libraryDependencies ++= Seq(
+      "co.fs2" %% "fs2-core" % "3.2.7",
+      "co.fs2" %% "fs2-io" % "3.2.7",
+      "org.tpolecat" %% "atto-core" % "0.9.5",
       "org.http4s"      %% "http4s-ember-server" % Http4sVersion,
       "org.http4s"      %% "http4s-ember-client" % Http4sVersion,
       "org.http4s"      %% "http4s-circe"        % Http4sVersion,
